@@ -55,11 +55,11 @@ exports.updateRequst = asyncHandler(async (req, res, next) => {
 //@route PUT /api/v1/requsts/:id/setprice
 //@access protected private admin
 exports.setRequstPriceByAdmin = asyncHandler(async (req, res, next) => {
-  const { price, priceAfterDiscount } = req.body;
+  const { price  } = req.body;
   const requestId = req.params.id;
   const requst = await Requst.findByIdAndUpdate(
     requestId,
-    { price, priceAfterDiscount },
+    { price },
     { new: true }
   );
   res.status(201).json({ status: "success", data: requst });

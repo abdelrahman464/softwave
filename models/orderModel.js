@@ -7,7 +7,15 @@ const orderSchema = new mongoose.Schema(
       ref: "User",
       required: [true, "order must be belong to user"],
     },
-
+    request: {
+      type: mongoose.Schema.ObjectId,
+      ref: "Request",
+      required: [true, "Request must be belong to user"],
+    },
+    description: {
+      type: String,
+      required: [true, "order description is required"],
+    },
     totalOrderPrice: {
       type: Number,
     },

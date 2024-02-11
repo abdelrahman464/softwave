@@ -105,23 +105,7 @@ exports.updateServiceValidator = [
     .optional()
     .isNumeric()
     .withMessage("Service quantity must be a number"),
-  check("price")
-    .optional()
-    .isNumeric()
-    .withMessage("Service price must be a number")
-    .isLength({ max: 32 })
-    .withMessage("To long price"),
-  check("priceAfterDiscount")
-    .optional()
-    .isNumeric()
-    .withMessage("Service priceAfterDiscount must be a number")
-    .toFloat()
-    .custom((value, { req }) => {
-      if (req.body.price <= value) {
-        throw new Error("priceAfterDiscount must be lower than price");
-      }
-      return true;
-    }),
+
 
   check("imageCover").optional(),
   check("images")

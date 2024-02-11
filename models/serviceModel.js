@@ -31,11 +31,6 @@ const serviceSchema = new mongoose.Schema(
 
     highlights_ar: [String],
     highlights_en: [String],
-
-    sold: {
-      type: Number,
-      default: 0,
-    },
     
     imageCover: {
       type: String,
@@ -111,4 +106,4 @@ serviceSchema.post("save", (doc) => {
   setImageURL(doc);
 });
 
-module.exports = mongoose.model("service", serviceSchema);
+module.exports = mongoose.model("Service", serviceSchema);

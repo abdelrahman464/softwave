@@ -22,14 +22,34 @@ const userRequestSchema = mongoose.Schema(
       trim: true,
       max: [200000, "Too long service price"],
     },
-    priceAfterDiscount: {
-      type: Number,
-    },
+    additionalPayment: [
+      {
+        description: String,
+        price: {
+          type: Number,
+          required: [true, "additional Payment is required"],
+          trim: true,
+          max: [200000, "Too long additional Payment"],
+        },
+        createdAt: {
+          type: Date,
+          default: Date.now(),
+        },
+      },
+    ],
     status: {
       type: String,
       enum: ["completed", "working", "pending"],
       default: "pending",
     },
+    projectFile: String,
+    meeting: [
+      {
+        link: String,
+        date: Date,
+        about: String,
+      },
+    ],
   },
   { timestamps: true }
 );

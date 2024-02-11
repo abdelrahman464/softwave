@@ -14,11 +14,11 @@ exports.filterOrderForLoggedUser = asyncHandler(async (req, res, next) => {
 });
 //@desc get all orders
 //@route GET /api/v1/orders
-//@access protected/user-admin-manager
+//@access protected/user-admin
 exports.findAllOrders = factory.getALl(Order);
 //@desc get specifi orders
 //@route GET /api/v1/orders/:orderId
-//@access protected/user-admin-manager
+//@access protected/user-admin
 exports.findSpecificOrder = factory.getOne(Order);
 
 //@desc Get checkout session from stripe and send it as response
@@ -31,9 +31,7 @@ exports.checkoutSession = asyncHandler(async (req, res, next) => {
   if (!request) {
     return next(new ApiError(` Request Not Found`, 404));
   }
-  const servicePrice = request.priceAfterDiscount
-    ? request.priceAfterDiscount
-    : request.price;
+  const servicePrice = request.price;
   const totalOrderPrice = Math.ceil(servicePrice);
   //create stripe checkout session
   const session = await stripe.checkout.sessions.create({
