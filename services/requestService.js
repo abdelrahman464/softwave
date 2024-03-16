@@ -17,10 +17,11 @@ exports.AuthorityRequst = asyncHandler(async (req, res, next) => {
 //@route Post /api/v1/requsts
 //@access protected public
 exports.createRequst = asyncHandler(async (req, res, next) => {
-  const { requestId, textarea } = req.body;
+  const { requestId, textarea, questionsAnswers } = req.body;
   const newRequst = await Requst.create({
     user: req.user._id,
     request: requestId,
+    questionsAnswers: questionsAnswers,
     textarea,
   });
   res.status(201).json({ status: "success", data: newRequst });
@@ -55,7 +56,7 @@ exports.updateRequst = asyncHandler(async (req, res, next) => {
 //@route PUT /api/v1/requsts/:id/setprice
 //@access protected private admin
 exports.setRequstPriceByAdmin = asyncHandler(async (req, res, next) => {
-  const { price  } = req.body;
+  const { price } = req.body;
   const requestId = req.params.id;
   const requst = await Requst.findByIdAndUpdate(
     requestId,

@@ -20,6 +20,7 @@
     "express-async-handler": "^1.2.0",
     "express-rate-limit": "^6.7.0",
     "express-validator": "^6.14.0",
+    "fs": "^0.0.1-security",
     "jsonwebtoken": "^9.0.2",
     "mailgun-js": "^0.6.7",
     "mongoose": "^6.0.13",

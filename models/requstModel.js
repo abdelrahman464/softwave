@@ -12,6 +12,18 @@ const userRequestSchema = mongoose.Schema(
       type: mongoose.Schema.ObjectId,
       ref: "Service",
     },
+    questionsAnswers: [
+      {
+        questionId: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "Question",
+          required: true,
+        },
+        answer: {
+          type: String,
+        },
+      },
+    ],
     textarea: {
       type: String,
       required: [true, "textarea is required"],

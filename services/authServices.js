@@ -20,7 +20,7 @@ exports.signup = asyncHandler(async (req, res, next) => {
   //2- generate token
   const token = generateToken(user._id);
 
-  res.status(201).json({ data: user, token });
+  return res.status(201).json({ data: user, token });
 });
 //@desc login
 //@route POST /api/v1/auth/login

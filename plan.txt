@@ -1,0 +1,26 @@
+1- save questions (question and typeOfAnswer)
+    make creating folder for key and inside folder for each type of file* automated (fs)
+
+2- register answers from frontend (quesId and ans + send type of service)   : send all images in images array and all pdfs in pdfs array 
+    2.1- make function that get path of folder which match service name and it's content  
+
+    2.2- if req.file.folderContent ? loop on images array ans store it and save it req.images
+
+
+
+
+questions 
+    code : done 
+    postman : not yet
+
+
+
+TODO
+    -when creating service get objects.type=file and mkdir with it's names 
+    -when answer i will store inside uploads/services/category.title_en/req.file.dir1
+
+
+
+TO ask abdo 
+1- check reset pass if hash newPassword
+2- will we make varify code via email after signup ?

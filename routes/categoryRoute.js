@@ -12,33 +12,30 @@ const {
   getCategory,
   updateCategory,
   deleteCategory,
- 
+  createCategoryDir,
 } = require("../services/categoryService");
 
 const authServices = require("../services/authServices");
 
-
 const router = express.Router();
 
+router.route("/").get(getCategories).post(
+  authServices.protect,
+  authServices.allowedTo("admin"),
 
-router
-  .route("/")
-  .get(getCategories)
-  .post(
-    authServices.protect,
-    authServices.allowedTo("admin"),
-   
-    createCategroyValidator,
-    createCategory
-  );
+  createCategroyValidator,
+  createCategoryDir,
+  createCategory
+);
 router
   .route("/:id")
   .get(getCategoryValidator, getCategory)
   .put(
     authServices.protect,
     authServices.allowedTo("admin"),
-   
+
     updateCategroyValidator,
+    createCategoryDir,
     updateCategory
   )
   .delete(

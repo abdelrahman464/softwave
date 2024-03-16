@@ -16,7 +16,6 @@ exports.resizeImage = asyncHandler(async (req, res, next) => {
 
   if (req.file) {
     await sharp(req.file.buffer)
-      
       .toFormat("jpeg")
       .jpeg({ quality: 98 })
       .toFile(`uploads/users/${filename}`);
@@ -132,14 +131,16 @@ exports.updateLoggedUserData = asyncHandler(async (req, res, next) => {
 //@desc deactivate logged user
 //@route DELETE /api/v1/user/deleteMe
 //@access private/protect
-exports.deleteLoggedUser = asyncHandler(async (req, res, next) => {
+exports.deactiveMyAcc = asyncHandler(async (req, res, next) => {
   await User.findByIdAndUpdate(req.user._id, { active: false });
-  res.status(204).send();
+  return res
+    .status(204)
+    .json({ status: "success", msg: "user deactivated successfully" });
 });
 //@desc activate logged user
 //@route PUT /api/v1/user/activeMe
 //@access private/protect
 exports.activeLoggedUser = asyncHandler(async (req, res, next) => {
   await User.findByIdAndUpdate(req.user._id, { active: true });
-  res.status(201).json({ data: "success" });
+  return res.status(201).json({ data: "success" });
 });

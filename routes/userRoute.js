@@ -14,12 +14,11 @@ const {
   createUser,
   getUser,
   updateUser,
-  deleteUser,
+  deactiveMyAcc,
   changeUserPassword,
   getLoggedUserData,
   updateLoggedUserPassword,
   updateLoggedUserData,
-  deleteLoggedUser,
   activeLoggedUser,
   uploadProfileImage,
   resizeImage,
@@ -27,15 +26,15 @@ const {
 
 const router = express.Router();
 
-router.get("/getMe", authServices.protect, getLoggedUserData, getUser);
-router.delete("/deleteMe", authServices.protect, deleteLoggedUser);
-router.put("/activeMe", authServices.protect, activeLoggedUser);
+router.get("/getMe", authServices.protect, getLoggedUserData, getUser); //uesd
+router.delete("/deactiveMyAcc", authServices.protect, deactiveMyAcc); //used
+router.put("/activeMe", authServices.protect, activeLoggedUser); //used
 router.put(
   "/changeMyPassword",
   authServices.protect,
   changeLoggedUserPasswordValidator,
   updateLoggedUserPassword
-);
+); //used
 router.put(
   "/changeMyData",
   authServices.protect,
@@ -43,7 +42,7 @@ router.put(
   resizeImage,
   updateLoggedUserValidator,
   updateLoggedUserData
-);
+); //used
 router.put(
   "/changePassword/:id",
   authServices.protect,
@@ -82,12 +81,6 @@ router
     resizeImage,
     updateUserValidator,
     updateUser
-  )
-  .delete(
-    authServices.protect,
-    authServices.allowedTo("admin"),
-    deleteUserValidator,
-    deleteUser
   );
 
 module.exports = router;
