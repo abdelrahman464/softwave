@@ -2,7 +2,7 @@ const sharp = require("sharp");
 const { v4: uuidv4 } = require("uuid");
 const asyncHandler = require("express-async-handler");
 const { uploadMixOfFiles } = require("../middlewares/uploadImageMiddleware");
-const Service = require("../models/serviceModel");
+const Sample = require("../models/samplesModel");
 const factory = require("./handllerFactory");
 const ApiError = require("../utils/apiError");
 
@@ -23,12 +23,12 @@ exports.resizeImages = asyncHandler(async (req, res, next) => {
     req.files.imageCover &&
     req.files.imageCover[0].mimetype.startsWith("image/")
   ) {
-    const imageCoverFileName = `service-${uuidv4()}-${Date.now()}-cover.webp`;
+    const imageCoverFileName = `samples-${uuidv4()}-${Date.now()}-cover.webp`;
 
     await sharp(req.files.imageCover[0].buffer)
       .toFormat("webp") // Convert to WebP
       .webp({ quality: 95 })
-      .toFile(`uploads/services/${imageCoverFileName}`);
+      .toFile(`uploads/samples/${imageCoverFileName}`);
 
     // Save imageCover file name in the request body for database saving
     req.body.imageCover = imageCoverFileName;
@@ -43,12 +43,12 @@ exports.resizeImages = asyncHandler(async (req, res, next) => {
         throw new ApiError(`File ${index + 1} is not an image file.`, 400);
       }
 
-      const imageName = `service-${uuidv4()}-${Date.now()}-${index + 1}.webp`;
+      const imageName = `samples-${uuidv4()}-${Date.now()}-${index + 1}.webp`;
 
       await sharp(img.buffer)
         .toFormat("webp") // Convert to WebP
         .webp({ quality: 95 })
-        .toFile(`uploads/services/${imageName}`);
+        .toFile(`uploads/samples/${imageName}`);
 
       return imageName;
     });
@@ -64,41 +64,23 @@ exports.resizeImages = asyncHandler(async (req, res, next) => {
   next();
 });
 
-exports.convertToArray = (req, res, next) => {
-  if (req.body.highlights_ar) {
-    // If it's not an array, convert it to an array
-    if (!Array.isArray(req.body.highlights_ar)) {
-      req.body.highlights_ar = [req.body.highlights_ar];
-    }
-  }
-  if (req.body.highlights_en) {
-    // If it's not an array, convert it to an array
-    if (!Array.isArray(req.body.highlights_en)) {
-      req.body.highlights_en = [req.body.highlights_en];
-    }
-  }
-
-  next();
-};
-
-//@desc get list of Services
-//@route GET /api/v1/services
+//@desc get list of samples
+//@route GET /api/v1/samples
 //@access public
-exports.getServices = factory.getALl(Service, "Service");
-//@desc get specific Service by id
-//@route GET /api/v1/services/:id
+exports.getAll = factory.getALl(Sample, "Sample");
+//@desc get specific sample by id
+//@route GET /api/v1/samples/:id
 //@access public
-exports.getService = factory.getOne(Service, "reviews");
-//@desc create Service
-//@route POST /api/v1/service
+exports.getOne = factory.getOne(Sample);
+//@desc create sample
+//@route POST /api/v1/samples
 //@access private
-exports.createService = factory.createOne(Service);
-//@desc update specific Service
-//@route PUT /api/v1/services/:id
+exports.createOne = factory.createOne(Sample);
+//@desc update specific sample
+//@route PUT /api/v1/samples/:id
 //@access private
-exports.updateService = factory.updateOne(Service);
-
-//@desc delete Service
-//@route DELETE /api/v1/services/:id
+exports.updateOne = factory.updateOne(Sample);
+//@desc delete sample
+//@route DELETE /api/v1/samples/:id
 //@access private
-exports.deleteService = factory.deleteOne(Service);
+exports.deleteOne = factory.deleteOne(Sample);

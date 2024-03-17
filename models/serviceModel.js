@@ -83,13 +83,13 @@ serviceSchema.pre(/^find/, function (next) {
 const setImageURL = (doc) => {
   //return image base url + iamge name
   if (doc.imageCover) {
-    const imageUrl = `${process.env.BASE_URL}/Requst/${doc.imageCover}`;
+    const imageUrl = `${process.env.BASE_URL}/services/${doc.imageCover}`;
     doc.imageCover = imageUrl;
   }
   if (doc.images) {
     const imageListWithUrl = [];
     doc.images.forEach((image) => {
-      const imageUrl = `${process.env.BASE_URL}/Requst/${image}`;
+      const imageUrl = `${process.env.BASE_URL}/services/${image}`;
       imageListWithUrl.push(imageUrl);
     });
     doc.images = imageListWithUrl;

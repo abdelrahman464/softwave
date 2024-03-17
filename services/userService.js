@@ -6,22 +6,31 @@ const ApiError = require("../utils/apiError");
 const factory = require("./handllerFactory");
 const User = require("../models/userModel");
 const generateToken = require("../utils/generateToken");
-const { uploadSingleImage } = require("../middlewares/uploadImageMiddleware");
+const { uploadSingleFile } = require("../middlewares/uploadImageMiddleware");
 
 //upload Singel image
-exports.uploadProfileImage = uploadSingleImage("profileImg");
+exports.uploadProfileImage = uploadSingleFile("profileImg");
 //image processing
 exports.resizeImage = asyncHandler(async (req, res, next) => {
-  const filename = `user-${uuidv4()}-${Date.now()}.jpeg`;
+  const { file } = req; // Access the uploaded file
 
-  if (req.file) {
-    await sharp(req.file.buffer)
-      .toFormat("jpeg")
-      .jpeg({ quality: 98 })
-      .toFile(`uploads/users/${filename}`);
+  const fileExtension = file.originalname.substring(file.originalname.lastIndexOf(".")); // Extract file extension
+  const newFileName = `userProfile-${uuidv4()}-${Date.now()}${fileExtension}`; // Generate new file name
 
-    //save image into our db
-    req.body.profileImg = filename;
+  // Check if the file is an image for the profile picture
+  if (file.mimetype.startsWith("image/")) {
+    // Process and save the image file using sharp for resizing, conversion, etc.
+    const filePath = `uploads/users/${newFileName}`;
+
+    await sharp(file.buffer)
+      .toFormat("jpeg") // Convert to JPEG format
+      .jpeg({ quality: 90 }) // Set JPEG quality
+      .toFile(filePath);
+
+    // Update the req.body to include the path for the new profile image
+    req.body.profileImg = filePath;
+  } else {
+    return next(new ApiError("Unsupported file type. Only images are allowed for profile pictures.", 400));
   }
 
   next();

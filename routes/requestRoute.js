@@ -5,6 +5,8 @@ const {
   setReqeustPriceValidator,
 } = require("../utils/validators/requestValidator");
 const {
+  uploadFile,
+  resizeFile,
   AuthorityRequst,
   updateRequstStatus,
   getRequsts,
@@ -20,7 +22,13 @@ const router = express.Router();
 router
   .route("/")
   .get(authServices.protect, authServices.allowedTo("admin"), getRequsts)
-  .post(authServices.protect, authServices.allowedTo("user"), createRequst);
+  .post(
+    authServices.protect,
+    authServices.allowedTo("user"),
+    uploadFile,
+    resizeFile,
+    createRequst
+  );
 router
   .route("/:id")
   .get(
@@ -32,6 +40,8 @@ router
   .put(
     authServices.protect,
     authServices.allowedTo("user"),
+    uploadFile,
+    resizeFile,
     AuthorityRequst,
     updateRequst
   )

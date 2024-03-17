@@ -77,5 +77,20 @@ userRequestSchema.pre(/^find/, function (next) {
 
   next();
 });
+const setFileURL = (doc) => {
+  //return File base url + file name
+  if (doc.projectFile) {
+    const FileUrl = `${process.env.BASE_URL}/requests/${doc.projectFile}`;
+    doc.projectFile = FileUrl;
+  }
+};
 
+// it work with findOne,findAll,update
+userRequestSchema.post("init", (doc) => {
+  setFileURL(doc);
+});
+// it work with create
+userRequestSchema.post("save", (doc) => {
+  setFileURL(doc);
+});
 module.exports = mongoose.model("Request", userRequestSchema);
