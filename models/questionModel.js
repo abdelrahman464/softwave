@@ -8,7 +8,7 @@ const questionSchema = mongoose.Schema({
   },
   type: {
     type: String,
-    // string Number file 
+    enum: ["text", "radio", "checkbox"],
   },
   options: {
     type: [String], // Specify that options is an array of strings
@@ -19,7 +19,14 @@ const questionSchema = mongoose.Schema({
     required: true,
   },
 });
-
+// ^find => it mean if part of of teh word contains find
+questionSchema.pre(/^find/, function (next) {
+  this.populate({
+    path: "service",
+    select: "title_ar title_en imageCover -_id",
+  });
+  next();
+});
 //2- create model
 const QuestionModel = mongoose.model("Question", questionSchema);
 

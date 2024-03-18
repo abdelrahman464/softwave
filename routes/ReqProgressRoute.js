@@ -24,7 +24,7 @@ const router = express.Router();
 router.get(
   "/request/:id",
   authServices.protect,
-  MongoIdValidator,
+  MongoIdValidator(),
   getAllRequestProgress
 );
 router
@@ -36,19 +36,19 @@ router
   .get(
     authServices.protect,
     authServices.allowedTo("admin"),
-    MongoIdValidator,
+    MongoIdValidator(),
     getOne
   )
   .put(
     authServices.protect,
     authServices.allowedTo("admin"),
-    MongoIdValidator,
+    MongoIdValidator(),
     updateOne
   )
   .delete(
     authServices.protect,
     authServices.allowedTo("admin"),
-    MongoIdValidator,
+    MongoIdValidator(),
     deleteOne
   );
 
