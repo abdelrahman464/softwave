@@ -45,7 +45,7 @@ router
     AuthorityRequst,
     updateRequst
   )
-  .delete(authServices.protect, authServices.allowedTo("admin"), deleteRequst);
+  .delete(authServices.protect, authServices.allowedTo("admin","user"),AuthorityRequst, deleteRequst);
 router
   .route("/:id/status")
   .put(

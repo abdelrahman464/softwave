@@ -2,7 +2,14 @@ const mongoose = require("mongoose");
 
 const sampleSchema = new mongoose.Schema(
   {
-    title: {
+    title_ar: {
+      type: String,
+      required: true,
+      trim: true,
+      minlength: [3, "Too short sample title"],
+      maxlength: [100, "too Shot sample title"],
+    },
+    title_en: {
       type: String,
       required: true,
       trim: true,
@@ -63,4 +70,17 @@ sampleSchema.post("init", (doc) => {
 sampleSchema.post("save", (doc) => {
   setImageURL(doc);
 });
+
+// ^find => it mean if part of of teh word contains find
+sampleSchema.pre(/^find/, function (next) {
+  // this => query
+
+  this.populate({
+    path: "service",
+    select: "title_ar title_en imageCover -_id",
+  });
+
+  next();
+});
+
 module.exports = mongoose.model("Sample", sampleSchema);

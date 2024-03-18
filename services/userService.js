@@ -13,26 +13,33 @@ exports.uploadProfileImage = uploadSingleFile("profileImg");
 //image processing
 exports.resizeImage = asyncHandler(async (req, res, next) => {
   const { file } = req; // Access the uploaded file
+  if (file) {
+    const fileExtension = file.originalname.substring(
+      file.originalname.lastIndexOf(".")
+    ); // Extract file extension
+    const newFileName = `userProfile-${uuidv4()}-${Date.now()}${fileExtension}`; // Generate new file name
 
-  const fileExtension = file.originalname.substring(file.originalname.lastIndexOf(".")); // Extract file extension
-  const newFileName = `userProfile-${uuidv4()}-${Date.now()}${fileExtension}`; // Generate new file name
+    // Check if the file is an image for the profile picture
+    if (file.mimetype.startsWith("image/")) {
+      // Process and save the image file using sharp for resizing, conversion, etc.
+      const filePath = `uploads/users/${newFileName}`;
 
-  // Check if the file is an image for the profile picture
-  if (file.mimetype.startsWith("image/")) {
-    // Process and save the image file using sharp for resizing, conversion, etc.
-    const filePath = `uploads/users/${newFileName}`;
+      await sharp(file.buffer)
+        .toFormat("jpeg") // Convert to JPEG format
+        .jpeg({ quality: 95 }) // Set JPEG quality
+        .toFile(filePath);
 
-    await sharp(file.buffer)
-      .toFormat("jpeg") // Convert to JPEG format
-      .jpeg({ quality: 90 }) // Set JPEG quality
-      .toFile(filePath);
-
-    // Update the req.body to include the path for the new profile image
-    req.body.profileImg = filePath;
-  } else {
-    return next(new ApiError("Unsupported file type. Only images are allowed for profile pictures.", 400));
+      // Update the req.body to include the path for the new profile image
+      req.body.profileImg = filePath;
+    } else {
+      return next(
+        new ApiError(
+          "Unsupported file type. Only images are allowed for profile pictures.",
+          400
+        )
+      );
+    }
   }
-
   next();
 });
 //@desc get list of user
