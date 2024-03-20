@@ -1,5 +1,5 @@
 const express = require("express");
-
+const sampleValidator = require("../utils/validators/sampleValidator");
 const authServices = require("../services/authServices");
 const samplesService = require("../services/samplesService");
 
@@ -13,6 +13,7 @@ router
     authServices.allowedTo("admin"),
     samplesService.uploadImages,
     samplesService.resizeImages,
+    sampleValidator.createSampleValidator,
     samplesService.createOne
   );
 router
@@ -23,6 +24,7 @@ router
     authServices.allowedTo("admin"),
     samplesService.uploadImages,
     samplesService.resizeImages,
+    sampleValidator.updateSampleValidator,
     samplesService.updateOne
   )
   .delete(

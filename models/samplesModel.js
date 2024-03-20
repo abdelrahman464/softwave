@@ -16,6 +16,18 @@ const sampleSchema = new mongoose.Schema(
       minlength: [3, "Too short sample title"],
       maxlength: [100, "too Shot sample title"],
     },
+    slug_ar: {
+      type: String,
+      required: true,
+      trim: true,
+      lowercase: true,
+    },
+    slug_en: {
+      type: String,
+      required: true,
+      trim: true,
+      lowercase: true,
+    },
     description_ar: {
       type: String,
       required: [true, "sample description is required"],
@@ -77,7 +89,7 @@ sampleSchema.pre(/^find/, function (next) {
 
   this.populate({
     path: "service",
-    select: "title_ar title_en imageCover -_id",
+    select: "title_ar title_en imageCover ",
   });
 
   next();
