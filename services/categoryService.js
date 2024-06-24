@@ -1,9 +1,30 @@
+const sharp = require("sharp");
+const { v4: uuidv4 } = require("uuid");
 const asyncHandler = require("express-async-handler");
 const path = require("path");
 const fs = require("fs");
+const { uploadSingleImage } = require("../middlewares/uploadImageMiddleware");
 const Category = require("../models/categoryModel");
 const factory = require("./handllerFactory");
 
+exports.uploadCategoryImage = uploadSingleImage("image");
+//image processing
+exports.resizeCategoryImage = asyncHandler(async (req, res, next) => {
+  //1- Image processing for imageCover
+  if (req.file.image) {
+    console.log("req.files.image", req.file.image);
+    const imageFileName = `category-${uuidv4()}-${Date.now()}.jpeg`;
+
+    await sharp(req.file.image.buffer)
+      .toFormat("jpeg")
+      .jpeg({ quality: 98 })
+      .toFile(`uploads/categories/${imageFileName}`);
+
+    // Save image into our db
+    req.body.image = imageFileName;
+  }
+  next();
+});
 //@desc get list of categories
 //@route GET /api/v1/categories
 //@access public

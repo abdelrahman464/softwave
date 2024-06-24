@@ -41,7 +41,7 @@ exports.resizeServiceImages = asyncHandler(async (req, res, next) => {
     await sharp(req.files.imageCover[0].buffer)
       .toFormat("jpeg")
       .jpeg({ quality: 98 })
-      .toFile(`uploads/service/${imageCoverFileName}`);
+      .toFile(`uploads/services/${imageCoverFileName}`);
 
     // Save image into our db
     req.body.imageCover = imageCoverFileName;
@@ -56,7 +56,7 @@ exports.resizeServiceImages = asyncHandler(async (req, res, next) => {
         await sharp(img.buffer)
           .toFormat("jpeg")
           .jpeg({ quality: 98 })
-          .toFile(`uploads/service/${imageName}`);
+          .toFile(`uploads/services/${imageName}`);
 
         // Save image into our db
         req.body.images.push(imageName);
@@ -87,4 +87,3 @@ exports.updateService = factory.updateOne(Service);
 //@route DELETE /api/v1/services/:id
 //@access private
 exports.deleteService = factory.deleteOne(Service);
-

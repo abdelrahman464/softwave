@@ -17,6 +17,7 @@ const categorySchema = mongoose.Schema(
       minlength: [3, "too short category english title "],
       maxlength: [32, "too long category english title "],
     },
+    image: String,
   },
   { timestamps: true }
 );
