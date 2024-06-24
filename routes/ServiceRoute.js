@@ -12,8 +12,8 @@ const {
   createService,
   updateService,
   deleteService,
-  uploadServiceImages,
-  resizeServiceImages,
+  uploadImages,
+  resizeImages,
   convertToArray,
 } = require("../services/serviceService");
 
@@ -30,8 +30,8 @@ router
   .post(
     authServices.protect,
     authServices.allowedTo("admin"),
-    uploadServiceImages,
-    resizeServiceImages,
+    uploadImages,
+    resizeImages,
     convertToArray,
     createServiceValidator,
     createService
@@ -42,8 +42,8 @@ router
   .put(
     authServices.protect,
     authServices.allowedTo("admin"),
-    uploadServiceImages,
-    resizeServiceImages,
+    uploadImages,
+    resizeImages,
     convertToArray,
     updateServiceValidator,
     updateService

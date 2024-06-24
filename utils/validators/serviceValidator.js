@@ -1,7 +1,7 @@
+const slugify = require("slugify");
 const { check } = require("express-validator");
 const validatorMiddleware = require("../../middlewares/validatorMiddleware");
 const Category = require("../../models/categoryModel");
-
 const ApiError = require("../apiError");
 
 exports.createServiceValidator = [
@@ -9,12 +9,22 @@ exports.createServiceValidator = [
     .notEmpty()
     .withMessage("Service english title required")
     .isLength({ min: 3 })
-    .withMessage("Service english title must be at least 3 chars"),
+    .withMessage("Service english title must be at least 3 chars")
+    .custom((val, { req }) => {
+      req.body.slug_en = slugify(val);
+      return true;
+    }),
+
   check("title_ar")
     .isLength({ min: 3 })
     .withMessage("Service arabic title must be at least 3 chars")
     .notEmpty()
-    .withMessage("Service arabic title required"),
+    .withMessage("Service arabic title required")
+    .custom((val, { req }) => {
+      req.body.slug_ar = slugify(val);
+      return true;
+    }),
+
   check("description_en")
     .notEmpty()
     .withMessage("Service english description is required")
@@ -83,11 +93,21 @@ exports.updateServiceValidator = [
   check("title_en")
     .optional()
     .isLength({ min: 3 })
-    .withMessage("Service english title must be at least 3 chars"),
+    .withMessage("Service english title must be at least 3 chars")
+    .custom((val, { req }) => {
+      req.body.slug_en = slugify(val);
+      return true;
+    }),
+
   check("title_ar")
     .isLength({ min: 3 })
     .withMessage("Service arabic title must be at least 3 chars")
-    .optional(),
+    .optional()
+    .custom((val, { req }) => {
+      req.body.slug_ar = slugify(val);
+      return true;
+    }),
+
   check("description_en")
     .optional()
     .isLength({ min: 15 })
@@ -105,7 +125,6 @@ exports.updateServiceValidator = [
     .optional()
     .isNumeric()
     .withMessage("Service quantity must be a number"),
-
 
   check("imageCover").optional(),
   check("images")

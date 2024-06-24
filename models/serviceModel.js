@@ -16,6 +16,18 @@ const serviceSchema = new mongoose.Schema(
       minlength: [3, "Too short service title"],
       maxlength: [100, "too Shot service title"],
     },
+    slug_ar: {
+      type: String,
+      required: true,
+      trim: true,
+      lowercase: true,
+    },
+    slug_en: {
+      type: String,
+      required: true,
+      trim: true,
+      lowercase: true,
+    },
     description_ar: {
       type: String,
       required: [true, "service description is required"],
@@ -74,7 +86,7 @@ serviceSchema.pre(/^find/, function (next) {
 
   this.populate({
     path: "category",
-    select: "title_ar title_en -_id",
+    select: "title_ar title_en ",
   });
 
   next();

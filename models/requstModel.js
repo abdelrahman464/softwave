@@ -30,7 +30,11 @@ const userRequestSchema = mongoose.Schema(
     },
     price: {
       type: Number,
-      required: [true, "service price is required"],
+      trim: true,
+      max: [200000, "Too long service price"],
+    },
+    expectedPrice: {
+      type: Number,
       trim: true,
       max: [200000, "Too long service price"],
     },
@@ -69,7 +73,7 @@ const userRequestSchema = mongoose.Schema(
 userRequestSchema.pre(/^find/, function (next) {
   this.populate({
     path: "user",
-    select: "name email profileImg -_id",
+    select: "name email profileImg ",
   }).populate({
     path: "service",
     select: "title_en category",
@@ -77,5 +81,20 @@ userRequestSchema.pre(/^find/, function (next) {
 
   next();
 });
+const setFileURL = (doc) => {
+  //return File base url + file name
+  if (doc.projectFile) {
+    const FileUrl = `${process.env.BASE_URL}/requests/${doc.projectFile}`;
+    doc.projectFile = FileUrl;
+  }
+};
 
+// it work with findOne,findAll,update
+userRequestSchema.post("init", (doc) => {
+  setFileURL(doc);
+});
+// it work with create
+userRequestSchema.post("save", (doc) => {
+  setFileURL(doc);
+});
 module.exports = mongoose.model("Request", userRequestSchema);

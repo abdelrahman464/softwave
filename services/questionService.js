@@ -22,11 +22,18 @@ exports.updateQuestion = factory.updateOne(Question);
 //@access private
 exports.deleteQuestion = factory.deleteOne(Question);
 
-exports.getQuestionsByService = async (req, res) => {
-  const { id } = req.params;
-  const questions = await Question.find({ service: id });
-  if (!questions) {
-    return res.status(404).json({ message: "No questions for this service" });
-  }
-  return res.status(200).json({ data: questions });
+// exports.getQuestionsByService = async (req, res) => {
+//   const { id } = req.params;
+//   const questions = await Question.find({ service: id });
+//   if (!questions) {
+//     return res.status(404).json({ message: "No questions for this service" });
+//   }
+//   return res.status(200).json({ data: questions });
+// };
+//filter questions in specefic serveic by serviceId
+exports.createFilterObj = (req, res, next) => {
+  let filterObject = {};
+  if (req.params.serviceId) filterObject = { service: req.params.serviceId };
+  req.filterObj = filterObject;
+  next();
 };

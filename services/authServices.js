@@ -1,11 +1,70 @@
 const crypto = require("crypto");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
+const passport = require("passport");
+const GoogleStrategy = require("passport-google-oauth20").Strategy;
 const asyncHandler = require("express-async-handler");
 const User = require("../models/userModel");
 const ApiError = require("../utils/apiError");
 const sendEmail = require("../utils/sendEmail");
 const generateToken = require("../utils/generateToken");
+
+// @desc    User Register,login with Google
+// @route   POST /api/v1/auth/google
+// @access  Public
+passport.use(
+  new GoogleStrategy(
+    {
+      clientID: process.env.GOOGLE_CLIENT_ID,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+      callbackURL: process.env.GOOGLE_CALLBACK_URL,
+      passReqToCallback: true,
+    },
+    asyncHandler(async (req, accessToken, refreshToken, profile, done) => {
+      // Find a user by google.id or email in the database
+      let existingUser = await User.findOne({
+        $or: [{ "google.id": profile.id }, { email: profile.emails[0].value }],
+      });
+
+      console.log("profile", profile);
+
+      if (existingUser) {
+        // Check if the user has logged in with Google before
+        if (!existingUser.google || !existingUser.google.id) {
+          // The user exists by email but hasn't logged in with Google before, so update the record
+          await User.updateOne(
+            { _id: existingUser._id }, // filter
+            {
+              // update
+              $set: {
+                "google.id": profile.id,
+                "google.email": profile.emails[0].value,
+                isOAuthUser: true,
+              },
+            }
+          );
+          // After update, it's a good idea to refresh the existingUser object if you plan to use it right after
+          existingUser = await User.findById(existingUser._id);
+        }
+        // Generate a JWT for the (possibly updated) existing user
+        const token = generateToken(existingUser._id);
+        return done(null, { user: existingUser, token }); // Include token in the user object
+      }
+      // No user exists by Google ID or email, create a new user
+      const newUser = await User.create({
+        name: profile.displayName,
+        email: profile.emails[0].value,
+        google: {
+          id: profile.id,
+          email: profile.emails[0].value,
+        },
+        isOAuthUser: true,
+      });
+      const token = generateToken(newUser._id);
+      done(null, { user: newUser, token }); // Include token in the user object
+    })
+  )
+);
 
 //@desc signup
 //@route POST /api/v1/auth/signup

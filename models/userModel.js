@@ -16,10 +16,23 @@ const userShcema = new mongoose.Schema(
     },
     phone: String,
     profileImg: String,
+    google: {
+      id: String,
+      email: String,
+    },
     password: {
       type: String,
-      required: [true, "password required"],
+      required: [
+        function () {
+          return !this.isOAuthUser;
+        },
+        "password required",
+      ],
       minlength: [8, "too short Password"],
+    },
+    isOAuthUser: {
+      type: Boolean,
+      default: false,
     },
     passwordChangedAt: Date,
     passwordResetCode: String,

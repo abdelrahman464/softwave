@@ -51,8 +51,8 @@ exports.createUserValidator = [
 
   check("phone")
     .optional()
-    .isMobilePhone(['en-QA', 'en-AE'])
-    .withMessage("Invalid phone number I only accept Qatari and UAE phone numbers"),
+    .isMobilePhone()
+    .withMessage("Invalid phone number "),
 
   check("profileImg").optional(),
 
@@ -77,9 +77,8 @@ exports.updateUserValidator = [
     ),
   check("phone")
     .optional()
-    .isMobilePhone(['en-QA', 'en-AE'])
-    .withMessage("Invalid phone number I only accept Qatari and UAE phone numbers"),
-
+    .isMobilePhone()
+    .withMessage("Invalid phone number "),
 
   check("profileImg").optional(),
 
@@ -138,9 +137,8 @@ exports.updateLoggedUserValidator = [
     ),
     check("phone")
     .optional()
-    .isMobilePhone(['en-QA', 'en-AE'])
-    .withMessage("Invalid phone number I only accept Qatari and UAE phone numbers"),
-
+    .isMobilePhone()
+    .withMessage("Invalid phone number "),
   validatorMiddleware,
 ];
 exports.changeLoggedUserPasswordValidator = [

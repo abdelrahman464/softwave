@@ -7,6 +7,7 @@ const orderRoute = require("./OrderRoute");
 const authRoute = require("./authRoute");
 const reqProgressRoute = require("./ReqProgressRoute");
 const QuestionRoute = require("./questionRoute");
+const sampleRoute = require("./sampleRoute");
 
 const mountRoutes = (app) => {
   // Mount Routes
@@ -19,5 +20,6 @@ const mountRoutes = (app) => {
   app.use("/api/v1/orders", orderRoute);
   app.use("/api/v1/reviews", reviewRoute);
   app.use("/api/v1/reqProgress", reqProgressRoute);
+  app.use("/api/v1/samples", sampleRoute);
 };
 module.exports = mountRoutes;

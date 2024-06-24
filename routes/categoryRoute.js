@@ -14,7 +14,7 @@ const {
   getCategory,
   updateCategory,
   deleteCategory,
-  createCategoryDir,
+  // createCategoryDir,
 } = require("../services/categoryService");
 
 const authServices = require("../services/authServices");
@@ -38,6 +38,8 @@ router
   .put(
     authServices.protect,
     authServices.allowedTo("admin"),
+    uploadCategoryImage,
+    resizeCategoryImage,
     updateCategroyValidator,
     updateCategory
   )
