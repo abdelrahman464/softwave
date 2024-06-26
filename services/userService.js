@@ -25,8 +25,8 @@ exports.resizeImage = asyncHandler(async (req, res, next) => {
       const filePath = `uploads/users/${newFileName}`;
 
       await sharp(file.buffer)
-        .toFormat("jpeg") // Convert to JPEG format
-        .jpeg({ quality: 95 }) // Set JPEG quality
+        .toFormat("webp") // Convert to WebP
+        .webp({ quality: 97 })
         .toFile(filePath);
 
       // Update the req.body to include the path for the new profile image

@@ -14,7 +14,6 @@ const {
   getCategory,
   updateCategory,
   deleteCategory,
-  // createCategoryDir,
 } = require("../services/categoryService");
 
 const authServices = require("../services/authServices");

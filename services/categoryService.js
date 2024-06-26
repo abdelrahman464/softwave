@@ -1,32 +1,43 @@
 const sharp = require("sharp");
 const { v4: uuidv4 } = require("uuid");
 const asyncHandler = require("express-async-handler");
-const path = require("path");
-const fs = require("fs");
+const ApiError = require("../utils/apiError");
 const { uploadSingleFile } = require("../middlewares/uploadImageMiddleware");
 const Category = require("../models/categoryModel");
 const factory = require("./handllerFactory");
-
-
+//upload Singel image
 exports.uploadCategoryImage = uploadSingleFile("image");
 //image processing
 exports.resizeCategoryImage = asyncHandler(async (req, res, next) => {
-  //1- Image processing for imageCover
-  console.log("Processing image...1");
-  if (req.file) {
-    console.log("Processing image...");
-    const imageFileName = `category-${uuidv4()}-${Date.now()}.webp`;
+  const { file } = req; // Access the uploaded file
+  if (file) {
+    const fileExtension = file.originalname.substring(
+      file.originalname.lastIndexOf(".")
+    ); // Extract file extension
+    const newFileName = `category-${uuidv4()}-${Date.now()}${fileExtension}`;
+    // Check if the file is an image
+    if (file.mimetype.startsWith("image/")) {
+      const filePath = `uploads/categories/${newFileName}`;
 
-    await sharp(req.file.buffer)
-      .toFormat("webp") // Convert to WebP
-      .webp({ quality: 95 })
-      .toFile(`uploads/categories/${imageFileName}`);
+      await sharp(file.buffer)
+        .toFormat("webp") // Convert to WebP
+        .webp({ quality: 97 })
+        .toFile(filePath);
 
-    // Save image into our db
-    req.body.image = imageFileName;
+      // Update the req.body to include the path for the new image
+      req.body.image = filePath;
+    } else {
+      return next(
+        new ApiError(
+          "Unsupported file type. Only images are allowed for category.",
+          400
+        )
+      );
+    }
   }
   next();
 });
+
 //@desc get list of categories
 //@route GET /api/v1/categories
 //@access public
@@ -48,19 +59,3 @@ exports.updateCategory = factory.updateOne(Category);
 //@route DELETE /api/v1/categories/:id
 //@access private
 exports.deleteCategory = factory.deleteOne(Category);
-
-// Function to create a new category directory
-exports.createCategoryDir = asyncHandler(async (req, res, next) => {
-  if (req.body.title_en) {
-    const dirPath = path.join(
-      __dirname,
-      "uploads",
-      "services",
-      req.body.title_en
-    );
-    // Try creating the directory. If it already exists, this does nothing.
-    await fs.mkdir(dirPath, { recursive: true });
-    console.log("Directory ensured:", dirPath);
-  }
-  next(); // Proceed with the next operation
-});
