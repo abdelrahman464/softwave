@@ -7,6 +7,8 @@ const {
   deleteCategroyValidator,
 } = require("../utils/validators/categoryValidator");
 const {
+  uploadCategoryImage,
+  resizeCategoryImage,
   getCategories,
   createCategory,
   getCategory,
@@ -19,21 +21,26 @@ const authServices = require("../services/authServices");
 
 const router = express.Router();
 
-router.route("/").get(getCategories).post(
-  authServices.protect,
-  authServices.allowedTo("admin"),
-  createCategroyValidator,
-  // createCategoryDir,
-  createCategory
-);
+router
+  .route("/")
+  .get(getCategories)
+  .post(
+    authServices.protect,
+    authServices.allowedTo("admin"),
+    uploadCategoryImage,
+    resizeCategoryImage,
+    createCategroyValidator,
+    createCategory
+  );
 router
   .route("/:id")
   .get(getCategoryValidator, getCategory)
   .put(
     authServices.protect,
     authServices.allowedTo("admin"),
+    uploadCategoryImage,
+    resizeCategoryImage,
     updateCategroyValidator,
-    // createCategoryDir,
     updateCategory
   )
   .delete(

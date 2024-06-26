@@ -1,12 +1,32 @@
+const sharp = require("sharp");
+const { v4: uuidv4 } = require("uuid");
 const asyncHandler = require("express-async-handler");
 const path = require("path");
 const fs = require("fs");
+const { uploadSingleFile } = require("../middlewares/uploadImageMiddleware");
 const Category = require("../models/categoryModel");
-const Service = require("../models/serviceModel");
 const factory = require("./handllerFactory");
-const ApiError = require("../utils/apiError");
-const ApiFeatures = require("../utils/apiFeatures");
 
+
+exports.uploadCategoryImage = uploadSingleFile("image");
+//image processing
+exports.resizeCategoryImage = asyncHandler(async (req, res, next) => {
+  //1- Image processing for imageCover
+  console.log("Processing image...1");
+  if (req.file) {
+    console.log("Processing image...");
+    const imageFileName = `category-${uuidv4()}-${Date.now()}.webp`;
+
+    await sharp(req.file.buffer)
+      .toFormat("webp") // Convert to WebP
+      .webp({ quality: 95 })
+      .toFile(`uploads/categories/${imageFileName}`);
+
+    // Save image into our db
+    req.body.image = imageFileName;
+  }
+  next();
+});
 //@desc get list of categories
 //@route GET /api/v1/categories
 //@access public

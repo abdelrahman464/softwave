@@ -9,6 +9,7 @@ const multerOptions = () => {
     // Allowed MIME types
     const allowedTypes = [
       "image/jpeg",
+      "image/webp",
       "image/png",
       "image/gif",
       "application/pdf",
