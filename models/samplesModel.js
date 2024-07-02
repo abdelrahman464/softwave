@@ -2,6 +2,13 @@ const mongoose = require("mongoose");
 
 const sampleSchema = new mongoose.Schema(
   {
+    //related to
+    service: {
+      type: mongoose.Schema.ObjectId,
+      ref: "Service",
+      required: [true, "service is required"],
+    },
+    // text infoes
     title_ar: {
       type: String,
       required: true,
@@ -40,17 +47,14 @@ const sampleSchema = new mongoose.Schema(
       trim: true,
       minlength: [20, "Too short sample description"],
     },
+    //service files(images)
     imageCover: {
       type: String,
       required: [true, "service image cover is required"],
     },
     images: [String],
+    //sample link
     link: String,
-    service: {
-      type: mongoose.Schema.ObjectId,
-      ref: "Service",
-      required: [true, "service is required"],
-    },
   },
   {
     timeseries: true,

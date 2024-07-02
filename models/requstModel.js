@@ -1,7 +1,9 @@
 const mongoose = require("mongoose");
 
+//TODO
+// 1- make user enter his email name phone manual , or use his account info
 const userRequestSchema = mongoose.Schema(
-  {
+  { 
     user: {
       required: [true, "user is required"],
       type: mongoose.Schema.ObjectId,
@@ -12,6 +14,36 @@ const userRequestSchema = mongoose.Schema(
       type: mongoose.Schema.ObjectId,
       ref: "Service",
     },
+    //if user has any additinal notes
+    note: {
+      type: String,
+    },
+    status: {
+      type: String,
+      enum: ["pending", "inProgress", "completed", "canceled"],
+      default: "pending",
+    },
+    //request file(images,docs,..)
+    projectFile: String,
+    // request payments
+    price: {
+      type: Number,
+      trim: true,
+    },
+    additionalPayment: [
+      {
+        description: String,
+        price: {
+          type: Number,
+          trim: true,
+        },
+        createdAt: {
+          type: Date,
+          default: Date.now(),
+        },
+      },
+    ],
+    // the answe of user on question of specific service
     questionsAnswers: [
       {
         questionId: {
@@ -24,41 +56,7 @@ const userRequestSchema = mongoose.Schema(
         },
       },
     ],
-    textarea: {
-      type: String,
-      required: [true, "textarea is required"],
-    },
-    price: {
-      type: Number,
-      trim: true,
-      max: [200000, "Too long service price"],
-    },
-    expectedPrice: {
-      type: Number,
-      trim: true,
-      max: [200000, "Too long service price"],
-    },
-    additionalPayment: [
-      {
-        description: String,
-        price: {
-          type: Number,
-          required: [true, "additional Payment is required"],
-          trim: true,
-          max: [200000, "Too long additional Payment"],
-        },
-        createdAt: {
-          type: Date,
-          default: Date.now(),
-        },
-      },
-    ],
-    status: {
-      type: String,
-      enum: ["completed", "working", "pending"],
-      default: "pending",
-    },
-    projectFile: String,
+    // the meeting with the user
     meeting: [
       {
         link: String,

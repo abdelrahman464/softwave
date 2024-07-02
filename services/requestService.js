@@ -71,15 +71,15 @@ exports.AuthorityRequst = asyncHandler(async (req, res, next) => {
 //@route Post /api/v1/requsts
 //@access protected public
 exports.createRequst = asyncHandler(async (req, res, next) => {
-  const { service, textarea, projectFile, questionsAnswers } = req.body;
+  const { service, note, projectFile, questionsAnswers } = req.body;
   const newRequst = await Requst.create({
     user: req.user._id,
     service,
     projectFile,
     questionsAnswers: questionsAnswers,
-    textarea,
+    note,
   });
-  res.status(201).json({ status: "success", data: newRequst });
+  return res.status(201).json({ status: "success", data: newRequst });
 });
 //@desc update request status
 //@route Post /api/v1/requsts/:id/status
@@ -92,20 +92,20 @@ exports.updateRequstStatus = asyncHandler(async (req, res, next) => {
     { status },
     { new: true }
   );
-  res.status(201).json({ status: "success", data: updatedRequst });
+  return res.status(201).json({ status: "success", data: updatedRequst });
 });
 //@desc update request
 //@route Post /api/v1/requsts/:id
 //@access protected private admin
 exports.updateRequst = asyncHandler(async (req, res, next) => {
-  const { textarea, projectFile, expectedPrice } = req.body;
+  const { note, projectFile, expectedPrice } = req.body;
   const requestId = req.params.id;
   const updatedRequst = await Requst.findByIdAndUpdate(
     requestId,
-    { textarea, projectFile, expectedPrice },
+    { note, projectFile, expectedPrice },
     { new: true }
   );
-  res.status(201).json({ status: "success", data: updatedRequst });
+  return res.status(201).json({ status: "success", data: updatedRequst });
 });
 //@desc update request
 //@route PUT /api/v1/requsts/:id/setprice
@@ -118,7 +118,7 @@ exports.setRequstPriceByAdmin = asyncHandler(async (req, res, next) => {
     { price },
     { new: true }
   );
-  res.status(201).json({ status: "success", data: requst });
+  return res.status(201).json({ status: "success", data: requst });
 });
 //@desc get list of requsts
 //@route GET /api/v1/requsts

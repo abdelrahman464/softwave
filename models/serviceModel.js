@@ -2,6 +2,13 @@ const mongoose = require("mongoose");
 
 const serviceSchema = new mongoose.Schema(
   {
+    //related to
+    category: {
+      type: mongoose.Schema.ObjectId,
+      ref: "Category",
+      required: [true, "service category is required"],
+    },
+    // text infoes
     title_ar: {
       type: String,
       required: true,
@@ -43,18 +50,17 @@ const serviceSchema = new mongoose.Schema(
 
     highlights_ar: [String],
     highlights_en: [String],
-    
+    //service price
+    price: {
+      type: Number,
+    },
+    //service files(images)
     imageCover: {
       type: String,
       required: [true, "service image cover is required"],
     },
     images: [String],
-    category: {
-      type: mongoose.Schema.ObjectId,
-      ref: "Category",
-      required: [true, "service category is required"],
-    },
-
+    //price
     ratingsAverage: {
       type: Number,
       min: [1, "rating must be between 1.0 and 5.0"],
