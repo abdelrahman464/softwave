@@ -1,0 +1,3 @@
+in getAll function 
+    -if user is admin => all requests will be back 
+    -else user's requests only will be back 

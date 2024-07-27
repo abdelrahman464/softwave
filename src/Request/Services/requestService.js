@@ -1,46 +1,6 @@
-const fs = require("fs");
-const { v4: uuidv4 } = require("uuid");
 const asyncHandler = require("express-async-handler");
-const {
-  uploadSingleFile,
-} = require("../../../middlewares/uploadImageMiddleware");
 const Requst = require("../models/requstModel");
 const factory = require("../../../helpers/handllerFactory");
-const ApiError = require("../../../utils/apiError");
-
-exports.uploadFile = uploadSingleFile("projectFile");
-
-exports.resizeFile = asyncHandler(async (req, res, next) => {
-  const { file } = req; // Access the uploaded file
-  if (file) {
-    const fileExtension = file.originalname.substring(
-      file.originalname.lastIndexOf(".")
-    ); // Extract file extension
-    const newFileName = `projectFile-${uuidv4()}-${Date.now()}${fileExtension}`; // Generate new file name
-
-    // Check for PDF or Word document based on MIME type
-    if (
-      file.mimetype === "application/pdf" ||
-      file.mimetype === "application/msword" ||
-      file.mimetype ===
-        "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-    ) {
-      // Save the file directly
-      fs.writeFileSync(`uploads/requests/${newFileName}`, file.buffer);
-    } else {
-      return next(
-        new ApiError(
-          "Unsupported file type. Only PDF and Word documents are allowed.",
-          400
-        )
-      );
-    }
-
-    // Save the new file name in the request body for further processing
-    req.body.projectFile = newFileName;
-  }
-  next();
-});
 
 exports.convertToArray = (req, res, next) => {
   if (req.body.highlights_ar) {
@@ -58,14 +18,9 @@ exports.convertToArray = (req, res, next) => {
 
   next();
 };
-
-// if role user check if user is the owner of the request
-exports.AuthorityRequst = asyncHandler(async (req, res, next) => {
+exports.filterRequsts = asyncHandler(async (req, res, next) => {
   if (req.user.role === "user") {
-    const requst = await Requst.findById(req.params.id);
-    if (requst.user._id.toString() !== req.user._id.toString()) {
-      return next(new ApiError(`you are not the owner of this request`, 401));
-    }
+    req.filterObj = { user: req.user._id };
   }
   next();
 });
@@ -73,14 +28,8 @@ exports.AuthorityRequst = asyncHandler(async (req, res, next) => {
 //@route Post /api/v1/requsts
 //@access protected public
 exports.createRequst = asyncHandler(async (req, res, next) => {
-  const { service, note, projectFile, questionsAnswers } = req.body;
-  const newRequst = await Requst.create({
-    user: req.user._id,
-    service,
-    projectFile,
-    questionsAnswers: questionsAnswers,
-    note,
-  });
+  req.body.user = req.user._id;
+  const newRequst = await Requst.create(req.body);
   return res.status(201).json({ status: "success", data: newRequst });
 });
 //@desc update request status
@@ -100,13 +49,10 @@ exports.updateRequstStatus = asyncHandler(async (req, res, next) => {
 //@route Post /api/v1/requsts/:id
 //@access protected private admin
 exports.updateRequst = asyncHandler(async (req, res, next) => {
-  const { note, projectFile, expectedPrice } = req.body;
   const requestId = req.params.id;
-  const updatedRequst = await Requst.findByIdAndUpdate(
-    requestId,
-    { note, projectFile, expectedPrice },
-    { new: true }
-  );
+  const updatedRequst = await Requst.findByIdAndUpdate(requestId, req.body, {
+    new: true,
+  });
   return res.status(201).json({ status: "success", data: updatedRequst });
 });
 //@desc update request
@@ -126,7 +72,6 @@ exports.setRequstPriceByAdmin = asyncHandler(async (req, res, next) => {
 //@route GET /api/v1/requsts
 //@access public
 exports.getRequsts = factory.getALl(Requst, "Request");
-
 //@desc get specific requsts by id
 //@route GET /api/v1/requsts/:id
 //@access public

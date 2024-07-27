@@ -22,6 +22,7 @@ exports.uploadImages = uploadMixOfFiles([
 exports.resizeImages = asyncHandler(async (req, res, next) => {
   // Image processing for imageCover
   if (
+    req.files &&
     req.files.imageCover &&
     req.files.imageCover[0].mimetype.startsWith("image/")
   ) {

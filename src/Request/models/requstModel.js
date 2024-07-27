@@ -3,7 +3,7 @@ const mongoose = require("mongoose");
 //TODO
 // 1- make user enter his email name phone manual , or use his account info
 const userRequestSchema = mongoose.Schema(
-  { 
+  {
     user: {
       required: [true, "user is required"],
       type: mongoose.Schema.ObjectId,
@@ -30,19 +30,6 @@ const userRequestSchema = mongoose.Schema(
       type: Number,
       trim: true,
     },
-    additionalPayment: [
-      {
-        description: String,
-        price: {
-          type: Number,
-          trim: true,
-        },
-        createdAt: {
-          type: Date,
-          default: Date.now(),
-        },
-      },
-    ],
     // the answe of user on question of specific service
     questionsAnswers: [
       {
@@ -53,6 +40,19 @@ const userRequestSchema = mongoose.Schema(
         },
         answer: {
           type: String,
+        },
+      },
+    ],
+    additionalPayment: [
+      {
+        description: String,
+        price: {
+          type: Number,
+          trim: true,
+        },
+        createdAt: {
+          type: Date,
+          default: Date.now(),
         },
       },
     ],
@@ -67,18 +67,25 @@ const userRequestSchema = mongoose.Schema(
   },
   { timestamps: true }
 );
-
+//!!!!!! pre middleware
 userRequestSchema.pre(/^find/, function (next) {
   this.populate({
     path: "user",
     select: "name email profileImg ",
-  }).populate({
-    path: "service",
-    select: "title_en category",
-  });
+  })
+    .populate({
+      path: "service",
+      select: "title_en category",
+    })
+    .populate({
+      path: "questionsAnswers.questionId",
+      select: "question -_id -service",
+    });
 
   next();
 });
+
+// helpers
 const setFileURL = (doc) => {
   //return File base url + file name
   if (doc.projectFile) {
@@ -86,7 +93,7 @@ const setFileURL = (doc) => {
     doc.projectFile = FileUrl;
   }
 };
-
+//!!!!! pre middleware
 // it work with findOne,findAll,update
 userRequestSchema.post("init", (doc) => {
   setFileURL(doc);

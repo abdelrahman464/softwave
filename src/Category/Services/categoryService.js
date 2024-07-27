@@ -56,7 +56,6 @@ exports.createCategory = factory.createOne(Category);
 //@route PUT /api/v1/categories/:id
 //@access private
 exports.updateCategory = factory.updateOne(Category);
-
 //@desc delete category
 //@route DELETE /api/v1/categories/:id
 //@access private

@@ -3,11 +3,10 @@ const express = require("express");
 const authServices = require("../../Auth/Services/authServices");
 const {
   setReqeustPriceValidator,
+  requstAuthority,
 } = require("../Validation/requestValidator");
 const {
-  uploadFile,
-  resizeFile,
-  AuthorityRequst,
+  filterRequsts,
   updateRequstStatus,
   getRequsts,
   getRequst,
@@ -16,15 +15,21 @@ const {
   updateRequst,
   setRequstPriceByAdmin,
 } = require("../Services/requestService");
+const { uploadFile, resizeFile } = require("../Services/requestMediaService");
 
 const router = express.Router();
 
 router
   .route("/")
-  .get(authServices.protect, authServices.allowedTo("admin"), getRequsts)
+  .get(
+    authServices.protect,
+    authServices.allowedTo("user", "admin"),
+    filterRequsts,
+    getRequsts
+  )
   .post(
     authServices.protect,
-    authServices.allowedTo("user"),
+    authServices.allowedTo("user", "admin"),
     uploadFile,
     resizeFile,
     createRequst
@@ -34,7 +39,7 @@ router
   .get(
     authServices.protect,
     authServices.allowedTo("admin", "user"),
-    AuthorityRequst,
+    requstAuthority,
     getRequst
   )
   .put(
@@ -42,24 +47,29 @@ router
     authServices.allowedTo("user"),
     uploadFile,
     resizeFile,
-    AuthorityRequst,
+    requstAuthority,
     updateRequst
   )
-  .delete(authServices.protect, authServices.allowedTo("admin","user"),AuthorityRequst, deleteRequst);
-router
-  .route("/:id/status")
-  .put(
+  .delete(
     authServices.protect,
-    authServices.allowedTo("admin"),
-    updateRequstStatus
+    authServices.allowedTo("admin", "user"),
+    requstAuthority,
+    deleteRequst
   );
-router
-  .route("/:id/setprice")
-  .put(
-    authServices.protect,
-    authServices.allowedTo("admin"),
-    setReqeustPriceValidator,
-    setRequstPriceByAdmin
-  );
-  
+// router
+//   .route("/:id/status")
+//   .put(
+//     authServices.protect,
+//     authServices.allowedTo("admin"),
+//     updateRequstStatus
+//   );
+// router
+//   .route("/:id/setprice")
+//   .put(
+//     authServices.protect,
+//     authServices.allowedTo("admin"),
+//     setReqeustPriceValidator,
+//     setRequstPriceByAdmin
+//   );
+
 module.exports = router;

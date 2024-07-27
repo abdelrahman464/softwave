@@ -2,6 +2,10 @@ const mongoose = require("mongoose");
 
 const RequestProgressService = new mongoose.Schema(
   {
+    request: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Request",
+    },
     title: {
       type: String,
       required: true,
@@ -9,14 +13,9 @@ const RequestProgressService = new mongoose.Schema(
     description: {
       type: String,
     },
-    request: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Request",
-    },
     reviewMeeting: {
       type: Date,
     },
-
   },
   {
     timeseries: true,
