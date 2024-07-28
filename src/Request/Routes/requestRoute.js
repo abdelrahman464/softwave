@@ -2,20 +2,26 @@ const express = require("express");
 
 const authServices = require("../../Auth/Services/authServices");
 const {
-  setReqeustPriceValidator,
+  createValidatior,
+  updateValidatior,
+  addMeetingValidatior,
+  addBillValidatior,
   requstAuthority,
 } = require("../Validation/requestValidator");
 const {
-  filterRequsts,
-  updateRequstStatus,
   getRequsts,
   getRequst,
   createRequst,
   deleteRequst,
   updateRequst,
-  setRequstPriceByAdmin,
+  addNewBill,
+  addNewMeeting,
 } = require("../Services/requestService");
-const { uploadFile, resizeFile } = require("../Services/requestMediaService");
+const {
+  uploadFile,
+  resizeFile,
+  filterRequsts,
+} = require("../Services/requestServiceAssesters");
 
 const router = express.Router();
 
@@ -44,10 +50,9 @@ router
   )
   .put(
     authServices.protect,
-    authServices.allowedTo("user"),
-    uploadFile,
-    resizeFile,
+    authServices.allowedTo("user", "admin"),
     requstAuthority,
+    updateValidatior,
     updateRequst
   )
   .delete(
@@ -56,20 +61,19 @@ router
     requstAuthority,
     deleteRequst
   );
-// router
-//   .route("/:id/status")
-//   .put(
-//     authServices.protect,
-//     authServices.allowedTo("admin"),
-//     updateRequstStatus
-//   );
-// router
-//   .route("/:id/setprice")
-//   .put(
-//     authServices.protect,
-//     authServices.allowedTo("admin"),
-//     setReqeustPriceValidator,
-//     setRequstPriceByAdmin
-//   );
+router.put(
+  "/addNewBill/:id",
+  authServices.protect,
+  authServices.allowedTo("admin"),
+  addBillValidatior,
+  addNewBill
+);
+router.put(
+  "/addNewMeeting/:id",
+  authServices.protect,
+  authServices.allowedTo("admin"),
+  addMeetingValidatior,
+  addNewMeeting
+);
 
 module.exports = router;

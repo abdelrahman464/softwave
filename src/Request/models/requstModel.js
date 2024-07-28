@@ -43,13 +43,13 @@ const userRequestSchema = mongoose.Schema(
         },
       },
     ],
-    additionalPayment: [
+    additionalBills: [
       {
-        description: String,
         price: {
           type: Number,
           trim: true,
         },
+        description: String,
         createdAt: {
           type: Date,
           default: Date.now(),
@@ -57,7 +57,7 @@ const userRequestSchema = mongoose.Schema(
       },
     ],
     // the meeting with the user
-    meeting: [
+    meetings: [
       {
         link: String,
         date: Date,

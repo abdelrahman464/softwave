@@ -6,8 +6,6 @@ const {
 } = require("../../../middlewares/uploadImageMiddleware");
 const ApiError = require("../../../utils/apiError");
 
-
-
 //1- upload file
 exports.uploadFile = uploadSingleFile("projectFile");
 //------------------
@@ -40,6 +38,30 @@ exports.resizeFile = asyncHandler(async (req, res, next) => {
 
     // Save the new file name in the request body for further processing
     req.body.projectFile = newFileName;
+  }
+  next();
+});
+//3- convert highlights_ar to array
+exports.convertToArray = (req, res, next) => {
+  if (req.body.highlights_ar) {
+    // If it's not an array, convert it to an array
+    if (!Array.isArray(req.body.highlights_ar)) {
+      req.body.highlights_ar = [req.body.highlights_ar];
+    }
+  }
+  if (req.body.highlights_en) {
+    // If it's not an array, convert it to an array
+    if (!Array.isArray(req.body.highlights_en)) {
+      req.body.highlights_en = [req.body.highlights_en];
+    }
+  }
+
+  next();
+};
+//4- filter requests based on user role
+exports.filterRequsts = asyncHandler(async (req, res, next) => {
+  if (req.user.role === "user") {
+    req.filterObj = { user: req.user._id };
   }
   next();
 });
