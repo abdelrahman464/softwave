@@ -64,14 +64,14 @@ exports.updateValidatior = [
         return ApiError(`Requst with id ${requstId} not found`, 404);
       }
     }),
-  check("price")
+  check("cost")
     .optional()
     .isNumeric()
-    .withMessage("Request price must be a number")
+    .withMessage("Request cost must be a number")
     .isLength({ min: 1 })
-    .withMessage("Request price must be greater than 1")
+    .withMessage("Request cost must be greater than 1")
     .isLength({ max: 5000 })
-    .withMessage("To long price"),
+    .withMessage("To long cost"),
   check("status")
     .optional()
     .isIn(["pending", "inProgress", "completed", "canceled"])
@@ -121,13 +121,13 @@ exports.addBillValidatior = [
         return ApiError(`Requst with id ${requstId} not found`, 404);
       }
     }),
-  check("price")
+  check("cost")
     .notEmpty()
-    .withMessage("price is required")
+    .withMessage("cost is required")
     .isNumeric()
-    .withMessage("Request price must be a number")
+    .withMessage("Request cost must be a number")
     .isFloat({ min: 1, max: 5000 })
-    .withMessage("Price must be a number between 1 and 5000"),
+    .withMessage("cost must be a number between 1 and 5000"),
 
   check("description")
     .notEmpty()

@@ -16,6 +16,8 @@ const {
   updateRequst,
   addNewBill,
   addNewMeeting,
+  makeBillPaid,
+  getAllBills,
 } = require("../Services/requestService");
 const {
   uploadFile,
@@ -24,6 +26,13 @@ const {
 } = require("../Services/requestServiceAssesters");
 
 const router = express.Router();
+
+router.get(
+  "/getAllBills",
+  authServices.protect,
+  authServices.allowedTo("admin"),
+  getAllBills
+);
 
 router
   .route("/")
@@ -74,6 +83,12 @@ router.put(
   authServices.allowedTo("admin"),
   addMeetingValidatior,
   addNewMeeting
+);
+router.put(
+  "/payBill/:id",
+  authServices.protect,
+  authServices.allowedTo("admin"),
+  makeBillPaid
 );
 
 module.exports = router;

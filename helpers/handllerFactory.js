@@ -12,9 +12,9 @@ exports.updateOne = (Model) =>
         new ApiError(`No document For this id ${req.params.id}`, 404)
       );
     }
-    //trigger "save" event when update the document
-    // document.save();
-    res.status(200).json({ data: document });
+    return res
+      .status(200)
+      .json({ msg: "updated successfully", data: document });
   });
 
 exports.createOne = (Model) =>

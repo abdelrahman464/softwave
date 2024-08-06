@@ -1,8 +1,9 @@
 const asyncHandler = require("express-async-handler");
-const Requst = require("../models/requstModel");
+const Request = require("../models/requstModel");
 const factory = require("../../../helpers/handllerFactory");
 const ApiError = require("../../../utils/apiError");
 
+/*               =====================> BASIC CRUD <=====================                            */
 //@desc send Requst
 //@route Post /api/v1/requsts
 //@access protected public
@@ -14,27 +15,33 @@ exports.createRequst = asyncHandler(async (req, res, next) => {
 //@desc get list of requsts
 //@route GET /api/v1/requsts
 //@access public
-exports.getRequsts = factory.getALl(Requst, "Request");
+exports.getRequsts = factory.getALl(Request, "Request");
 //@desc get specific requsts by id
 //@route GET /api/v1/requsts/:id
 //@access public
-exports.getRequst = factory.getOne(Requst);
-//@desc update request 
+exports.getRequst = factory.getOne(Request);
+//@desc update request
 //@route Post /api/v1/requsts/:id
 //@access protected private admin
 exports.updateRequst = asyncHandler(async (req, res, next) => {
   const requestId = req.params.id;
-  const updatedRequst = await Requst.findByIdAndUpdate(requestId, req.body, {
+  const updatedRequst = await Request.findByIdAndUpdate(requestId, req.body, {
     new: true,
   });
   return res.status(201).json({ status: "success", data: updatedRequst });
 });
+//@desc delete Service
+//@route DELETE /api/v1/requsts/:id
+//@access private
+exports.deleteRequst = factory.deleteOne(Request);
+
+/*               =====================> ADVANCED Updates WITH SPECIFIC Logic <=====================                            */
 //@desc add New Meeting
 //@route Post /api/v1/requsts/addNewMeeting/:id
 //@access protected private admin
 exports.addNewMeeting = asyncHandler(async (req, res, next) => {
   const requestId = req.params.id;
-  const updatedRequst = await Requst.findByIdAndUpdate(
+  const updatedRequst = await Request.findByIdAndUpdate(
     requestId,
     {
       $push: {
@@ -50,7 +57,7 @@ exports.addNewMeeting = asyncHandler(async (req, res, next) => {
     }
   );
   if (!updatedRequst) {
-    return next(new ApiError("Requst not found", 404));
+    return next(new ApiError("Request not found", 404));
   }
   return res.status(200).json({ status: "new payment was added successfully" });
 });
@@ -59,13 +66,13 @@ exports.addNewMeeting = asyncHandler(async (req, res, next) => {
 //@access protected private admin
 exports.addNewBill = asyncHandler(async (req, res, next) => {
   const requestId = req.params.id;
-  const updatedRequst = await Requst.findByIdAndUpdate(
+  const updatedRequst = await Request.findByIdAndUpdate(
     requestId,
     {
       $push: {
-        additionalBills: {
+        bills: {
+          cost: req.body.cost,
           description: req.body.description,
-          price: req.body.price,
         },
       },
     },
@@ -78,7 +85,33 @@ exports.addNewBill = asyncHandler(async (req, res, next) => {
   }
   return res.status(200).json({ status: "new payment was added successfully" });
 });
-//@desc delete Service
-//@route DELETE /api/v1/requsts/:id
-//@access private
-exports.deleteRequst = factory.deleteOne(Requst);
+// update bill to be paid
+exports.makeBillPaid = asyncHandler(async (req, res) => {
+  const { id } = req.params; //bill_id
+  const result = await Request.updateOne(
+    { "bills._id": id },
+    {
+      $set: {
+        "bills.$.isPaid": true,
+        "bills.$.paidAt": Date.now(),
+      },
+    }
+  );
+  if (result.nModified === 0) {
+    return res.status(404).json({ msg: "This bill not found" });
+  }
+  return res.status(200).json({ msg: "bill has been paid successfully " });
+});
+
+//get all bills with user and request => in array  [{bill + request + }]
+exports.getAllBills = asyncHandler(async (req, res) => {
+  const bills = await Request.find({
+    bills: { $exists: true, $not: { $size: 0 } },
+  }).select("user service bills");
+
+  if (bills.length === 0) {
+    return res.status(404).json({ msg: `there are no bills` });
+  }
+
+  return res.status(200).json({ data: bills });
+});

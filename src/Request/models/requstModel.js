@@ -26,7 +26,7 @@ const userRequestSchema = mongoose.Schema(
     //request file(images,docs,..)
     projectFile: String,
     // request payments
-    price: {
+    cost: {
       type: Number,
       trim: true,
     },
@@ -43,13 +43,22 @@ const userRequestSchema = mongoose.Schema(
         },
       },
     ],
-    additionalBills: [
+    bills: [
       {
-        price: {
+        description: String,
+        cost: {
           type: Number,
           trim: true,
         },
-        description: String,
+        isPaid: {
+          type: Boolean,
+          default: false,
+        },
+        paymentMethodType: {
+          type: String,
+          enum: ["manually", "paypal", "stripe"],
+        },
+        paidAt: Date,
         createdAt: {
           type: Date,
           default: Date.now(),
@@ -102,4 +111,7 @@ userRequestSchema.post("init", (doc) => {
 userRequestSchema.post("save", (doc) => {
   setFileURL(doc);
 });
+// Create an index on the bills._id field
+userRequestSchema.index({ 'bills._id': 1 });
+
 module.exports = mongoose.model("Request", userRequestSchema);
