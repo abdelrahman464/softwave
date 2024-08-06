@@ -35,6 +35,10 @@ const setImageURL = (doc) => {
 categorySchema.post("init", (doc) => {
   setImageURL(doc);
 });
+// it work with create
+categorySchema.post("save", (doc) => {
+  setImageURL(doc);
+});
 //2- create model
 const CategoryModel = mongoose.model("Category", categorySchema);
 

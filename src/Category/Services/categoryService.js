@@ -27,7 +27,7 @@ exports.resizeCategoryImage = asyncHandler(async (req, res, next) => {
         .toFile(filePath);
 
       // Update the req.body to include the path for the new image
-      req.body.image = filePath;
+      req.body.image = newFileName;
     } else {
       return next(
         new ApiError(
