@@ -85,6 +85,12 @@ serviceSchema.virtual("reviews", {
   foreignField: "service",
   localField: "_id",
 });
+// virtual field =>samples
+serviceSchema.virtual("samples", {
+  ref: "Sample",
+  foreignField: "service",
+  localField: "_id",
+});
 
 // ^find => it mean if part of of teh word contains find
 serviceSchema.pre(/^find/, function (next) {

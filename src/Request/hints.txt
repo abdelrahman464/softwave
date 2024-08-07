@@ -6,3 +6,4 @@ in getAll function
 
 
     ### MAYBE YOU CAN USE FILTEROBJECT FUNCTION      
+    ### oh , i've already implemented this logic  but i forgot to mark this task as DONE! , thank you for your advice  MR:kobro

@@ -40,14 +40,22 @@ exports.getOne = (Model, populationOt) =>
     res.status(200).json({ data: document });
   });
 
-exports.getALl = (Model, modelName = "") =>
+exports.getALl = (Model, modelName = "", populationOptions = "") =>
   asyncHandler(async (req, res) => {
     let filter = {};
     if (req.filterObj) {
       filter = req.filterObj;
     }
+
+    let query = Model.find(filter);
+    //handle population options if exist
+    if (!(Object.keys(populationOptions).length === 0)) {
+      Object.keys(populationOptions).forEach((key) => {
+        query = query.populate(`${key}`, populationOptions[key]);
+      });
+    }
     const documentsCounts = await Model.countDocuments();
-    const apiFeatures = new ApiFeatures(Model.find(filter), req.query)
+    const apiFeatures = new ApiFeatures(query, req.query)
       .paginate(documentsCounts)
       .filter()
       .search(modelName)

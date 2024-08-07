@@ -86,7 +86,9 @@ exports.convertToArray = (req, res, next) => {
 //@desc get list of Services
 //@route GET /api/v1/services
 //@access public
-exports.getServices = factory.getALl(Service, "Service");
+exports.getServices = factory.getALl(Service, "Service", {
+  samples: "title_ar title_en -service", // if you want to select all fields => samples:null
+});
 //@desc get specific Service by id
 //@route GET /api/v1/services/:id
 //@access public
